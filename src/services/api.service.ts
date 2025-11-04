@@ -24,14 +24,6 @@ apiService.interceptors.request.use(
       config.headers.Authorization = `Bearer ${token}`;
     }
     
-    // Solo redirigir si no hay token y NO es una petición de autenticación
-    if (!token && !isAuthRequest) {
-      const currentPath = window.location.pathname;
-      if (currentPath !== '/login' && currentPath !== '/signup') {
-        window.location.href = '/login';
-      }
-    }
-    
     return config;
   },
   (error: AxiosError) => {
@@ -53,13 +45,7 @@ apiService.interceptors.response.use(
   async (error: AxiosError) => {
     if (error.response?.status === 401) {
       useUserStore.getState().logout();
-      // Solo redirigir si no estamos ya en /login y no es una petición de autenticación
-      const isAuthRequest = error.config?.url?.includes('/auth/login') || 
-                           error.config?.url?.includes('/auth/register-user') || 
-                           error.config?.url?.includes('/auth/register-seller');
-      if (window.location.pathname !== '/login' && !isAuthRequest) {
-        window.location.href = '/login';
-      }
+      // El PrivateRoute se encargará de redirigir a /login si es necesario
       return Promise.reject(error);
     }
     return Promise.reject(error);

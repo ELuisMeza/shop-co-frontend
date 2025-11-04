@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { LoginService } from '../services/login.service';
 import { useState } from 'react';
 import { useUserStore } from '../stores/user.store';
@@ -8,6 +8,7 @@ export const LoginPage = () => {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate();
 
   const { setToken, setUser } = useUserStore();
 
@@ -17,10 +18,8 @@ export const LoginPage = () => {
     if (response.success && response.data) {
       setToken(response.data.access_token);
       setUser(response.data.user);
-      // Usar window.location.href para asegurar que el store se haya persistido
-      setTimeout(() => {
-        window.location.href = '/store';
-      }, 100);
+      toast.success('Inicio de sesión exitoso');
+      navigate('/store', { replace: true });
     } else {
       toast.error(response.message);
     }

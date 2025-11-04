@@ -1,10 +1,12 @@
 import { useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
 import { LoginService } from '../services/login.service';
 import { useUserStore } from '../stores/user.store';
 import { toast } from 'react-hot-toast';
 import type { CreateSeller } from '../types/user.types';
 
 export const SellerSignupForm = () => {
+  const navigate = useNavigate();
   const { setToken, setUser } = useUserStore();
 
   const {
@@ -34,10 +36,7 @@ export const SellerSignupForm = () => {
       setToken(response.data.access_token);
       setUser(response.data.user);
       toast.success('Vendedor registrado correctamente');
-      // Usar window.location.href para asegurar que el store se haya persistido
-      setTimeout(() => {
-        window.location.href = '/store';
-      }, 100);
+      navigate('/store', { replace: true });
     } else {
       toast.error(response.message);
     }
