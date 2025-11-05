@@ -1,19 +1,23 @@
 import apiService from './api.service';
-import type { Product, ProductsResponse, Category, CategoriesResponse } from '../types/product.types';
+import type { Product, ProductsResponse, CategoriesResponse } from '../types/product.types';
 
 export interface GetProductsParams {
-  category_id?: string;
+  category_ids?: string[];
   search?: string;
   page?: number;
   limit?: number;
-  status?: string;
 }
 
 /**
- * Obtiene todos los productos con filtros opcionales
+ * Busca productos con paginación, filtros por nombre y categorías
  */
 export const getProducts = async (params?: GetProductsParams): Promise<ProductsResponse> => {
-  const response = await apiService.get<ProductsResponse>('/products', { params });
+  const response = await apiService.post<ProductsResponse>('/products/search', {
+    page: params?.page || 1,
+    limit: params?.limit || 10,
+    ...(params?.search && { search: params.search }),
+    ...(params?.category_ids && params.category_ids.length > 0 && { category_ids: params.category_ids }),
+  });
   return response.data;
 };
 
@@ -37,8 +41,10 @@ export const getCategories = async (): Promise<CategoriesResponse> => {
  * Obtiene productos por categoría
  */
 export const getProductsByCategory = async (categoryId: string): Promise<ProductsResponse> => {
-  const response = await apiService.get<ProductsResponse>('/products', {
-    params: { category_id: categoryId },
+  const response = await apiService.post<ProductsResponse>('/products/search', {
+    page: 1,
+    limit: 10,
+    category_ids: [categoryId],
   });
   return response.data;
 };

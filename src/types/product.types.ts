@@ -1,4 +1,4 @@
-export type GlobalStatus = 'ACTIVE' | 'INACTIVE' | 'DELETED';
+export type GlobalStatus = 'ACTIVE' | 'INACTIVE' | 'DELETED' | 'active' | 'inactive' | 'deleted';
 
 export interface Category {
   id: string;
@@ -11,16 +11,15 @@ export interface Category {
 export interface Product {
   id: string;
   seller_id: string;
-  category_id: string;
-  category?: Category;
   name: string;
   description?: string;
-  price: number;
+  price: string;
   stock: number;
   status: GlobalStatus;
   created_at: Date;
   modified_at: Date;
-  image_url?: string; // Para imágenes de productos
+  image_path?: string; 
+  categories?: string[]; 
 }
 
 export interface ProductsResponse {

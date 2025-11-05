@@ -41,23 +41,40 @@ export const StorePage = () => {
       const params = {
         page: currentPage,
         limit,
-        ...(selectedCategory && { category_id: selectedCategory }),
+        ...(selectedCategory && { category_ids: [selectedCategory] }),
         ...(debouncedSearchQuery && { search: debouncedSearchQuery }),
-        status: 'ACTIVE',
       };
 
       const response = await getProducts(params);
       
+      // Debug: ver la estructura de la respuesta
+      console.log('Respuesta del backend:', response);
+      
+      // Validar que la respuesta tenga la estructura esperada
+      let products: Product[] = [];
+      
+      if (Array.isArray(response)) {
+        // Si la respuesta es directamente un array de productos
+        products = response;
+      } else if (response?.products && Array.isArray(response.products)) {
+        // Si la respuesta tiene la propiedad products
+        products = response.products;
+      } else if (response && typeof response === 'object') {
+        // Si la respuesta es un objeto pero no tiene products, intentar usar data
+        products = (response as any).data || [];
+      }
+      
       if (reset) {
-        setProducts(response.products);
+        setProducts(products);
       } else {
-        setProducts((prev) => [...prev, ...response.products]);
+        setProducts((prev) => [...prev, ...products]);
       }
 
-      setHasMore(response.products.length === limit);
+      setHasMore(products.length === limit);
     } catch (err: any) {
       setError(err.response?.data?.message || 'Error al cargar productos');
       console.error('Error al cargar productos:', err);
+      console.error('Respuesta completa:', err.response?.data);
     } finally {
       setLoading(false);
     }

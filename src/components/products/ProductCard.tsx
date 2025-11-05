@@ -1,4 +1,4 @@
-import type { Product } from '../types/product.types';
+import type { Product } from "../../types/product.types";
 
 interface ProductCardProps {
   product: Product;
@@ -12,16 +12,30 @@ export const ProductCard = ({ product, onProductClick }: ProductCardProps) => {
     }
   };
 
-  // Función para calcular descuento (si hay precio original)
-  // Por ahora mostramos solo el precio, pero la estructura permite agregar descuentos
-  const formatPrice = (price: number) => {
+  // Función para formatear el precio (el precio viene como string desde el backend)
+  const formatPrice = (price: string | number) => {
+    const numPrice = typeof price === 'string' ? parseFloat(price) : price;
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: 'USD',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(price);
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }).format(numPrice);
   };
+
+  // Construir la URL completa de la imagen
+  const getImageUrl = () => {
+    if (!product.image_path) return null;
+    const baseURL = import.meta.env.VITE_API_URL_BACK || '';
+    // Eliminar la barra final de baseURL si existe y asegurar que image_path comience con /
+    const cleanBaseURL = baseURL.replace(/\/$/, '');
+    const cleanImagePath = product.image_path.startsWith('/') 
+      ? product.image_path 
+      : `/${product.image_path}`;
+    return `${cleanBaseURL}${cleanImagePath}`;
+  };
+
+  const imageUrl = getImageUrl();
 
   return (
     <div
@@ -30,9 +44,9 @@ export const ProductCard = ({ product, onProductClick }: ProductCardProps) => {
     >
       {/* Imagen del producto */}
       <div className="w-full aspect-square bg-neutral-100 flex items-center justify-center overflow-hidden">
-        {product.image_url ? (
+        {imageUrl ? (
           <img
-            src={product.image_url}
+            src={imageUrl}
             alt={product.name}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           />
