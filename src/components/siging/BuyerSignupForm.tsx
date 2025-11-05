@@ -1,9 +1,9 @@
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import { LoginService } from '../services/login.service';
-import { useUserStore } from '../stores/user.store';
+import { LoginService } from '../../services/login.service';
+import { useUserStore } from '../../stores/user.store';
 import { toast } from 'react-hot-toast';
-import type { CreateUser } from '../types/user.types';
+import type { CreateUser } from '../../types/user.types';
 
 export const BuyerSignupForm = () => {
   const navigate = useNavigate();
@@ -18,15 +18,15 @@ export const BuyerSignupForm = () => {
   });
 
   const onSubmit = async (data: CreateUser) => {
-    const response = await LoginService.register(data);
+    const {data: loginData, success, message} = await LoginService.register(data);
     
-    if (response.success && response.data) {
-      setToken(response.data.access_token);
-      setUser(response.data.user);
+    if (success && loginData) {
+      setToken(loginData.access_token);
+      setUser(loginData.user);
       toast.success('Usuario registrado correctamente');
       navigate('/store', { replace: true });
     } else {
-      toast.error(response.message);
+      toast.error(message);
     }
   };
 

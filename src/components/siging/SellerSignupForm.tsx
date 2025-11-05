@@ -1,9 +1,9 @@
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import { LoginService } from '../services/login.service';
-import { useUserStore } from '../stores/user.store';
+import { LoginService } from '../../services/login.service';
+import { useUserStore } from '../../stores/user.store';
 import { toast } from 'react-hot-toast';
-import type { CreateSeller } from '../types/user.types';
+import type { CreateSeller } from '../../types/user.types';
 
 export const SellerSignupForm = () => {
   const navigate = useNavigate();
@@ -30,15 +30,15 @@ export const SellerSignupForm = () => {
       logo_image: logoFile,
     };
     
-    const response = await LoginService.registerSeller(sellerData);
+    const {data: loginData, success, message} = await LoginService.registerSeller(sellerData);
     
-    if (response.success && response.data) {
-      setToken(response.data.access_token);
-      setUser(response.data.user);
+    if (success && loginData) {
+      setToken(loginData.access_token);
+      setUser(loginData.user);
       toast.success('Vendedor registrado correctamente');
       navigate('/store', { replace: true });
     } else {
-      toast.error(response.message);
+      toast.error(message);
     }
   };
 

@@ -14,14 +14,14 @@ export const LoginPage = () => {
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const response = await LoginService.login(email, password);
-    if (response.success && response.data) {
-      setToken(response.data.access_token);
-      setUser(response.data.user);
+    const {data, success, message} = await LoginService.login(email, password);
+    if (success && data) {      
+      setToken(data.access_token);
+      setUser(data.user);
       toast.success('Inicio de sesión exitoso');
       navigate('/store', { replace: true });
     } else {
-      toast.error(response.message);
+      toast.error(message);
     }
   }
   

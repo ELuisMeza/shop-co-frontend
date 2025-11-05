@@ -1,6 +1,6 @@
 import { Link, useSearchParams } from 'react-router-dom';
-import { BuyerSignupForm } from '../components/BuyerSignupForm';
-import { SellerSignupForm } from '../components/SellerSignupForm';
+import { BuyerSignupForm } from '../components/siging/BuyerSignupForm';
+import { SellerSignupForm } from '../components/siging/SellerSignupForm';
 
 export const SigingPage = () => {
   const [searchParams] = useSearchParams();

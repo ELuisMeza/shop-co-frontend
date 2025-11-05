@@ -19,7 +19,10 @@ export const useUserStore = create<UserStore>()(
       setUser: (user: TypeUser | null) => set({ user }),
       setToken: (token: string) => set({ token }),
 
-      logout: () => set({ user: null, token: "" }),
+      logout: () => {
+        set({ user: null, token: "" });
+        localStorage.removeItem("user-storage");
+      },
     }),
     {
       name: "user-storage",

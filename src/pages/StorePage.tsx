@@ -1,9 +1,9 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { Search } from 'lucide-react';
-import { ProductCard } from '../components/ProductCard';
-import { ProductFilters } from '../components/ProductFilters';
 import { getProducts, getCategories } from '../services/product.service';
 import type { Product, Category } from '../types/product.types';
+import { ProductFilters } from '../components/products/ProductFilters';
+import { ProductCard } from '../components/products/ProductCard';
 
 export const StorePage = () => {
   const [products, setProducts] = useState<Product[]>([]);

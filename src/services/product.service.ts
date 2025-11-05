@@ -29,7 +29,7 @@ export const getProductById = async (id: string): Promise<Product> => {
  * Obtiene todas las categorías
  */
 export const getCategories = async (): Promise<CategoriesResponse> => {
-  const response = await apiService.get<CategoriesResponse>('/categories');
+  const response = await apiService.get<CategoriesResponse>('/categories/all');
   return response.data;
 };
 
