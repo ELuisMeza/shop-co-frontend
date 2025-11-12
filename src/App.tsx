@@ -11,9 +11,9 @@ function App() {
 
   return (
     <BrowserRouter>
-    <Toaster position="top-right" />
-    <AppRoutes />
-  </BrowserRouter>
+      <Toaster position="top-right" />
+      <AppRoutes />
+    </BrowserRouter>
   )
 }
 

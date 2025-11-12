@@ -1,0 +1,95 @@
+import { useEffect, useState } from "react";
+import type { Product, GetProductsParams } from "../types/product.types";
+import { ProductService } from "../services/product.service";
+import toast from "react-hot-toast";
+
+export const useGetProducts = (params: GetProductsParams) => {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [pagination, setPagination] = useState<{
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  }>({
+    total: 0,
+    page: 1,
+    limit: 12,
+    totalPages: 0,
+  });
+
+  useEffect(() => {
+    const getProducts = async () => {
+      setLoading(true);
+
+      const { page, limit, search, category_ids, min_price, max_price } = params;
+
+      const filteredParams: GetProductsParams = {
+        page,
+        limit,
+      };
+
+      if (search && search.trim() !== "") {
+        filteredParams.search = search;
+      }
+
+      if (category_ids && category_ids.length > 0) {
+        filteredParams.category_ids = category_ids;
+      }
+
+      if (typeof min_price === "number" && min_price !== 0) {
+        filteredParams.min_price = min_price;
+      }
+
+      if (typeof max_price === "number" && max_price !== 0) {
+        filteredParams.max_price = max_price;
+      }
+
+      const { success, message, data } = await ProductService.getProducts(filteredParams);
+
+      if (success && data) {
+        setProducts(data.products || []);
+        // Usar meta si está disponible, sino calcular totalPages
+        const total = data.meta?.total ?? data.total ?? 0;
+        const limit = data.meta?.limit ?? data.limit ?? 12;
+        const page = data.meta?.page ?? data.page ?? 1;
+        
+        // Calcular totalPages: usar meta.totalPages si existe, sino calcularlo
+        let totalPages = data.meta?.totalPages;
+        if (!totalPages || isNaN(totalPages)) {
+          totalPages = limit > 0 ? Math.ceil(total / limit) : 0;
+        }
+        
+        // Asegurar que totalPages sea un número válido
+        totalPages = Math.max(0, Math.floor(totalPages || 0));
+        
+        setPagination({
+          total: total,
+          page: page,
+          limit: limit,
+          totalPages: totalPages,
+        });
+      } else {
+        setError(message);
+        toast.error(message);
+        setProducts([]);
+        setPagination({
+          total: 0,
+          page: 1,
+          limit: params.limit || 12,
+          totalPages: 0,
+        });
+      }
+      setLoading(false);
+    };
+    getProducts();
+  }, [params]);
+  
+  return {
+    products,
+    loading,
+    error,
+    pagination,
+  };
+};

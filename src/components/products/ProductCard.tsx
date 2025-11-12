@@ -1,4 +1,5 @@
 import type { Product } from "../../types/product.types";
+import { loadImage } from "../../utils/loadImage";
 
 interface ProductCardProps {
   product: Product;
@@ -23,20 +24,6 @@ export const ProductCard = ({ product, onProductClick }: ProductCardProps) => {
     }).format(numPrice);
   };
 
-  // Construir la URL completa de la imagen
-  const getImageUrl = () => {
-    if (!product.image_path) return null;
-    const baseURL = import.meta.env.VITE_API_URL_BACK || '';
-    // Eliminar la barra final de baseURL si existe y asegurar que image_path comience con /
-    const cleanBaseURL = baseURL.replace(/\/$/, '');
-    const cleanImagePath = product.image_path.startsWith('/') 
-      ? product.image_path 
-      : `/${product.image_path}`;
-    return `${cleanBaseURL}${cleanImagePath}`;
-  };
-
-  const imageUrl = getImageUrl();
-
   return (
     <div
       className="group cursor-pointer bg-white rounded-lg overflow-hidden transition-all duration-300 hover:shadow-lg"
@@ -44,9 +31,9 @@ export const ProductCard = ({ product, onProductClick }: ProductCardProps) => {
     >
       {/* Imagen del producto */}
       <div className="w-full aspect-square bg-neutral-100 flex items-center justify-center overflow-hidden">
-        {imageUrl ? (
+        {product.image_path ? (
           <img
-            src={imageUrl}
+            src={loadImage(product.image_path)}
             alt={product.name}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           />
@@ -80,30 +67,12 @@ export const ProductCard = ({ product, onProductClick }: ProductCardProps) => {
           <span className="text-xl font-bold text-text">
             {formatPrice(product.price)}
           </span>
-          {/* Espacio reservado para precio original y descuento */}
-          {/* {product.original_price && product.original_price > product.price && (
-            <>
-              <span className="text-muted line-through">
-                {formatPrice(product.original_price)}
-              </span>
-              <span className="text-red-600 font-semibold text-sm">
-                -{Math.round(((product.original_price - product.price) / product.original_price) * 100)}%
-              </span>
-            </>
-          )} */}
         </div>
 
         {/* Stock disponible */}
-        {product.stock > 0 && (
-          <p className="text-sm text-muted mt-2">
-            {product.stock} disponibles
-          </p>
-        )}
-        {product.stock === 0 && (
-          <p className="text-sm text-red-600 mt-2 font-medium">
-            Agotado
-          </p>
-        )}
+        <p className="text-sm text-muted mt-2">
+          {product.seller_name}
+        </p>
       </div>
     </div>
   );

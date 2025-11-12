@@ -11,6 +11,7 @@ export interface Category {
 export interface Product {
   id: string;
   seller_id: string;
+  seller_name: string;
   name: string;
   description?: string;
   price: string;
@@ -27,9 +28,19 @@ export interface ProductsResponse {
   total: number;
   page: number;
   limit: number;
+  meta?: {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  };
 }
 
-export interface CategoriesResponse {
-  categories: Category[];
+export interface GetProductsParams {
+  category_ids?: string[];
+  search?: string;
+  page?: number;
+  limit?: number;
+  min_price?: number;
+  max_price?: number;
 }
-
