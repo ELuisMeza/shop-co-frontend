@@ -1,17 +1,13 @@
+import { useNavigate } from "react-router-dom";
 import type { Product } from "../../types/product.types";
 import { loadImage } from "../../utils/loadImage";
 
 interface ProductCardProps {
   product: Product;
-  onProductClick?: (product: Product) => void;
 }
 
-export const ProductCard = ({ product, onProductClick }: ProductCardProps) => {
-  const handleClick = () => {
-    if (onProductClick) {
-      onProductClick(product);
-    }
-  };
+export const ProductCard = ({ product }: ProductCardProps) => {
+  const navigate = useNavigate();
 
   // Función para formatear el precio (el precio viene como string desde el backend)
   const formatPrice = (price: string | number) => {
@@ -27,7 +23,7 @@ export const ProductCard = ({ product, onProductClick }: ProductCardProps) => {
   return (
     <div
       className="group cursor-pointer bg-white rounded-lg overflow-hidden transition-all duration-300 hover:shadow-lg"
-      onClick={handleClick}
+      onClick={() => navigate(`/store/product/${product.id}`)}
     >
       {/* Imagen del producto */}
       <div className="w-full aspect-square bg-neutral-100 flex items-center justify-center overflow-hidden">

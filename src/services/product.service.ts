@@ -1,9 +1,9 @@
 import apiService from "./api.service";
 import type {
-  Product,
+  TypeProduct,
   ProductsResponse,
   GetProductsParams,
-  Category,
+  TypeCategory,
 } from "../types/product.types";
 
 const BASE_URL = "/products";
@@ -47,9 +47,9 @@ export const ProductService = {
 
   getProductById: async (
     id: string
-  ): Promise<{ success: boolean; message: string; data: Product | null }> => {
+  ): Promise<{ success: boolean; message: string; data: TypeProduct | null }> => {
     try {
-      const response = await apiService.get<Product>(`${BASE_URL}/${id}`);
+      const response = await apiService.get<TypeProduct>(`${BASE_URL}/${id}`);
       return {
         success: true,
         message: "Producto cargado correctamente",
@@ -67,10 +67,10 @@ export const ProductService = {
   getCategories: async (): Promise<{
     success: boolean;
     message: string;
-    data: Category[] | null;
+    data: TypeCategory[] | null;
   }> => {
     try {
-      const response = await apiService.get<Category[]>(
+      const response = await apiService.get<TypeCategory[]>(
         `/categories/all`
       );
       return {

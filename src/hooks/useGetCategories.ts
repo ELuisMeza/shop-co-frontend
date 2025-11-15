@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import type { Category } from "../types/product.types";
+import type { TypeCategory } from "../types/product.types";
 import { ProductService } from "../services/product.service";
 import toast from "react-hot-toast";
 
 export const useGetCategories = () => {
-  const [categories, setCategories] = useState<Category[]>([]);
+  const [categories, setCategories] = useState<TypeCategory[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

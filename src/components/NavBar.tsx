@@ -5,15 +5,19 @@ import {
   X,
   ShoppingCart,
   User,
+  Store,
 } from "lucide-react";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useUserStore } from "../stores/user.store";
 
 export const NavBar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const navigate = useNavigate();
+
 
   const { user, logout } = useUserStore();
+  const isSeller = user?.role?.name?.toLowerCase() === "seller" || user?.role?.name?.toLowerCase() === "vendedor";
 
   const handleToggleMobileMenu = () => {
     setIsMobileMenuOpen((prev) => !prev);
@@ -26,19 +30,32 @@ export const NavBar = () => {
   return (
     <header className="w-full border-b border-border bg-background/80 backdrop-blur-sm sticky top-0 z-50">
       <div className="container mx-auto px-6 py-4 flex justify-between items-center relative">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/store')}>
           <ShoppingBag className="w-6 h-6" />
           <h1 className="text-2xl font-bold">SHOP.CO</h1>
         </div>
         <div className="hidden md:flex gap-3">
           {user ? (
             <div className="flex items-center gap-4">
-              <button
-                className="p-2 hover:bg-neutral-100 rounded-lg transition-colors relative"
-                aria-label="Carrito de compras"
-              >
-                <ShoppingCart className="w-6 h-6" />
-              </button>
+              {isSeller && (
+                <Link
+                  to="/seller/dashboard"
+                  className="bg-primary text-background rounded-lg px-4 py-2 text-sm font-medium hover:opacity-90 transition flex items-center gap-2"
+                >
+                  <Store className="w-4 h-4" />
+                  Gestionar Tienda
+                </Link>
+              )}
+              
+              {!isSeller && (
+                <button
+                  className="p-2 hover:bg-neutral-100 rounded-lg transition-colors relative"
+                  aria-label="Carrito de compras"
+                  onClick={() => navigate('/store/cart')}
+                >
+                  <ShoppingCart className="w-6 h-6" />
+                </button>
+              )}
 
               <div className="relative group">
                 <button
@@ -108,28 +125,54 @@ export const NavBar = () => {
           </button>
           {isMobileMenuOpen && (
             <div className="absolute right-6 top-full mt-3 w-48 rounded-xl border border-border bg-background shadow-lg flex flex-col overflow-hidden">
-              <Link
-                to="/signup?type=buyer"
-                className="px-4 py-3 text-sm hover:bg-neutral-50 transition"
-                onClick={handleCloseMobileMenu}
-              >
-                Soy Comprador
-              </Link>
-              <Link
-                to="/signup?type=seller"
-                className="px-4 py-3 text-sm hover:bg-neutral-50 transition"
-                onClick={handleCloseMobileMenu}
-              >
-                Soy Vendedor
-              </Link>
-              <Link
-                to="/login"
-                className="px-4 py-3 text-sm hover:bg-neutral-50 transition flex items-center justify-between"
-                onClick={handleCloseMobileMenu}
-              >
-                <span>Iniciar Sesión</span>
-                <ArrowRight className="w-4 h-4" />
-              </Link>
+              {user ? (
+                <>
+                  {isSeller && (
+                    <Link
+                      to="/seller/dashboard"
+                      className="px-4 py-3 text-sm hover:bg-neutral-50 transition flex items-center gap-2"
+                      onClick={handleCloseMobileMenu}
+                    >
+                      <Store className="w-4 h-4" />
+                      Gestionar Tienda
+                    </Link>
+                  )}
+                  <button
+                    onClick={() => {
+                      logout();
+                      handleCloseMobileMenu();
+                    }}
+                    className="px-4 py-3 text-sm hover:bg-neutral-50 transition text-left text-red-600"
+                  >
+                    Cerrar sesión
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link
+                    to="/signup?type=buyer"
+                    className="px-4 py-3 text-sm hover:bg-neutral-50 transition"
+                    onClick={handleCloseMobileMenu}
+                  >
+                    Soy Comprador
+                  </Link>
+                  <Link
+                    to="/signup?type=seller"
+                    className="px-4 py-3 text-sm hover:bg-neutral-50 transition"
+                    onClick={handleCloseMobileMenu}
+                  >
+                    Soy Vendedor
+                  </Link>
+                  <Link
+                    to="/login"
+                    className="px-4 py-3 text-sm hover:bg-neutral-50 transition flex items-center justify-between"
+                    onClick={handleCloseMobileMenu}
+                  >
+                    <span>Iniciar Sesión</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </Link>
+                </>
+              )}
             </div>
           )}
         </div>

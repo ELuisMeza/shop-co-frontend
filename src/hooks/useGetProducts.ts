@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import type { Product, GetProductsParams } from "../types/product.types";
+import type { TypeProduct, GetProductsParams } from "../types/product.types";
 import { ProductService } from "../services/product.service";
 import toast from "react-hot-toast";
 
 export const useGetProducts = (params: GetProductsParams) => {
-  const [products, setProducts] = useState<Product[]>([]);
+  const [products, setProducts] = useState<TypeProduct[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [pagination, setPagination] = useState<{

@@ -7,12 +7,18 @@ export const useDebounce = <T>(
 ) => {
   const handler = useRef<ReturnType<typeof setTimeout> | null>(null);
   const setValueRef = useRef(setValue);
+  const isFirstRender = useRef(true);
 
   useEffect(() => {
     setValueRef.current = setValue;
   });
 
   useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+
     if (handler.current) clearTimeout(handler.current);
     handler.current = setTimeout(() => {
       setValueRef.current(value);

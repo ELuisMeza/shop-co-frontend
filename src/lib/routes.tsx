@@ -6,6 +6,9 @@ import { SigingPage } from '../pages/SigingPage';
 import { StorePage } from '../pages/StorePage';
 import { MainPage } from '../pages/MainPage';
 import { useUserStore } from '../stores/user.store';
+import { ProductDetailsPage } from '../pages/ProductDetailsPage';
+import { SellerDashboardPage } from '../pages/SellerDashboardPage';
+import { CartPage } from '../pages/CartPage';
 
 /**
  * Componente para proteger rutas de invitados (login/signup)
@@ -15,6 +18,23 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { user, token } = useUserStore();
 
   if (user && token) {
+    return <Navigate to="/store" replace />;
+  }
+
+  return <>{children}</>;
+};
+
+
+const SellerProtectedRoute = ({ children }: { children: React.ReactNode }) => {
+  const { user, token } = useUserStore();
+
+  if (!user || !token) {
+    return <Navigate to="/login" replace />;
+  }
+
+  const isSeller = user?.role?.name?.toLowerCase() === "seller";
+  
+  if (!isSeller) {
     return <Navigate to="/store" replace />;
   }
 
@@ -53,6 +73,28 @@ export const routes: RouteObject[] = [
       {
         index: true,
         element: <StorePage />,
+      },
+      {
+        path: 'product/:id',
+        element: <ProductDetailsPage />,
+      },
+      {
+        path: 'cart',
+        element: <CartPage />,
+      },
+    ],
+  },
+  {
+    path: '/seller/dashboard',
+    element: (
+      <SellerProtectedRoute>
+        <MainPage />
+      </SellerProtectedRoute>
+    ),
+    children: [
+      {
+        index: true,
+        element: <SellerDashboardPage />,
       },
     ],
   }
