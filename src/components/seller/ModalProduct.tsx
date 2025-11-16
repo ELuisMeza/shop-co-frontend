@@ -50,14 +50,7 @@ export const ModalProduct = ({ productId, onClose, type }: Props) => {
 
   const watchedCategories = watch("categories");
 
-  useSetDefaultData({ type, product, reset, setUploadFiles, setValue });
-
-  // Establecer el estado del producto cuando se carga
-  useState(() => {
-    if (product?.status) {
-      setProductStatus(product.status as "active" | "inactive");
-    }
-  });
+  useSetDefaultData({ type, product, reset, setUploadFiles, setValue, setProductStatus });
 
   const addImage = (file: File) => {
     const isFirstImage = uploadFiles.length === 0;

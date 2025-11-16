@@ -28,7 +28,6 @@ export const StorePage = () => {
 
   const handlePageChange = (page: number) => {
     setParams(prev => ({ ...prev, page }));
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (

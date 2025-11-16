@@ -120,7 +120,7 @@ export const ProductService = {
     try {
       const response = await apiService.post<ProductsResponse>(`${BASE_URL}/my-products`, {
         page: params?.page || 1,
-        limit: params?.limit || 10,
+        limit: params?.limit || 9,
         ...(params?.search && { search: params.search }),
         ...(params?.category_ids &&
           params.category_ids.length > 0 && {
@@ -128,6 +128,7 @@ export const ProductService = {
           }),
         ...(params?.min_price && { min_price: params.min_price }),
         ...(params?.max_price && { max_price: params.max_price }),
+        ...(params?.status && { status: params.status }),
       });
       return {
         success: true,

@@ -1,15 +1,15 @@
-import { Store, Package, Plus, Loader2, Edit, Building2, MapPin, FileText, Image as ImageIcon } from "lucide-react";
+import { Store, Loader2, Edit, Building2, MapPin, FileText, Image as ImageIcon } from "lucide-react";
 import { useState } from "react";
 import { useGetSellerProfile } from "../hooks/useGetSellerProfile";
 import { ModalProduct } from "../components/seller/ModalProduct";
 import { ModalSellerInfo } from "../components/seller/ModalSellerInfo";
 import type { TypeSeller } from "../types/user.types";
-import { ProductCard } from "../components/products/ProductCard";
 import { Stadistics } from "../components/seller/Stadistics";
 import { loadImage } from "../utils/loadImage";
+import { MyProducts } from "../components/seller/MyProducts";
 
 export const SellerDashboardPage = () => {
-  const { sellerProfile, loading, error, setSellerProfile, products } = useGetSellerProfile();
+  const { sellerProfile, loading, error, setSellerProfile } = useGetSellerProfile();
   const [showModalProduct, setShowModalProduct] = useState<{show: boolean, type: "edit" | "add", productId: string | null}>({show: false, type: "add", productId: null});
   const [showModalSellerInfo, setShowModalSellerInfo] = useState(false);
 
@@ -131,42 +131,7 @@ export const SellerDashboardPage = () => {
       </div>
 
       {/* Sección de productos */}
-      <div className="bg-white border border-border rounded-xl p-6 shadow-sm mb-8">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-semibold text-text">Mis Productos</h2>
-          <button
-            onClick={() => setShowModalProduct({show: true, type: "add", productId: null})}
-            className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors"
-          >
-            <Plus className="w-4 h-4" />
-            Agregar Producto
-          </button>
-        </div>
-
-        {products.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {products.map((product) => (
-              <ProductCard 
-                key={product.id} 
-                product={product} 
-                isSeller={true} 
-                showModalEdit={() => setShowModalProduct({show: true, type: "edit", productId: product.id})}
-              />
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-12 text-muted">
-            <Package className="w-12 h-12 mx-auto mb-4 opacity-50" />
-            <p>No tienes productos publicados aún</p>
-            <button
-              onClick={() => setShowModalProduct({show: true, type: "add", productId: null})}
-              className="mt-4 inline-block text-primary hover:underline"
-            >
-              Publica tu primer producto
-            </button>
-          </div>
-        )}
-      </div>
+      <MyProducts setShowModalProduct={setShowModalProduct} />
 
       {showModalProduct.show && sellerProfile && (
         <ModalProduct

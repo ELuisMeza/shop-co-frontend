@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import type { CreateProduct, TypeProductDetails } from "../../../types/product.types";
 import { loadImage } from "../../../utils/loadImage";
 import type { UseFormSetValue } from "react-hook-form";
+import type { GlobalStatus } from "../../../lib/global-states";
 
 interface Props {
   type: "edit" | "add";
@@ -9,9 +10,10 @@ interface Props {
   reset: (data: any) => void;
   setUploadFiles: (files: {id: string, file: File  | string, isMain: boolean}[]) => void;
   setValue: UseFormSetValue<CreateProduct>
+  setProductStatus: (status: GlobalStatus) => void;
 }
 
-export const useSetDefaultData = ({ type, product, reset, setUploadFiles, setValue }: Props) => {
+export const useSetDefaultData = ({ type, product, reset, setUploadFiles, setValue, setProductStatus }: Props) => {
   useEffect(() => {
 
     if (type === "edit" && product) {
@@ -23,6 +25,7 @@ export const useSetDefaultData = ({ type, product, reset, setUploadFiles, setVal
         categories: product.categories || [],
       });
 
+      setProductStatus(product.status);
       setValue("categories", product.categories.map((category) => category.id));
       setUploadFiles(product.images.map((img) => ({
         id: img.id,

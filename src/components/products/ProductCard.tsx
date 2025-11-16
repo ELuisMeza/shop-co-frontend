@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import type { TypeProduct } from "../../types/product.types";
 import { loadImage } from "../../utils/loadImage";
 import { formatPrice } from "../../utils/formatPrice";
+import { EyeOff } from "lucide-react";
 
 interface ProductCardProps {
   product: TypeProduct;
@@ -11,6 +12,7 @@ interface ProductCardProps {
 
 export const ProductCard = ({ product, isSeller = false, showModalEdit }: ProductCardProps) => {
   const navigate = useNavigate();
+  const isInactive = product.status === "inactive";
 
   return (
     <div
@@ -49,8 +51,16 @@ export const ProductCard = ({ product, isSeller = false, showModalEdit }: Produc
           </div>
         )}
         
-        {/* Badge de stock bajo (opcional) */}
-        {product.stock > 0 && product.stock <= 10 && (
+        {/* Badge de estado inactivo */}
+        {isInactive && isSeller && (
+          <div className="absolute top-3 left-3 flex items-center gap-1.5 bg-neutral-800/95 backdrop-blur-sm text-white px-3 py-1.5 rounded-lg text-xs font-bold shadow-lg">
+            <EyeOff className="w-3.5 h-3.5" />
+            No publicado
+          </div>
+        )}
+
+        {/* Badge de stock bajo (solo si está activo) */}
+        {!isInactive && product.stock > 0 && product.stock <= 10 && (
           <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm px-2 py-1 rounded text-xs font-medium text-neutral-700">
             Solo {product.stock} disponibles
           </div>
@@ -91,7 +101,12 @@ export const ProductCard = ({ product, isSeller = false, showModalEdit }: Produc
             {formatPrice(product.price)}
           </span>
           
-          {product.stock > 0 ? (
+          {isInactive && isSeller ? (
+            <div className="flex items-center gap-1.5 text-xs font-semibold text-neutral-600 bg-neutral-100 px-2.5 py-1 rounded">
+              <EyeOff className="w-3 h-3" />
+              Oculto
+            </div>
+          ) : product.stock > 0 ? (
             <span className="text-xs text-neutral-500 font-medium">
               Stock: {product.stock}
             </span>
@@ -101,6 +116,16 @@ export const ProductCard = ({ product, isSeller = false, showModalEdit }: Produc
             </span>
           )}
         </div>
+
+        {/* Mensaje informativo discreto para productos inactivos */}
+        {isInactive && isSeller && (
+          <div className="mt-3 pt-3 border-t border-neutral-100">
+            <p className="text-xs text-neutral-500 flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-neutral-400"></span>
+              Este producto no es visible para los compradores
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );
