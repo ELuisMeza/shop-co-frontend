@@ -1,42 +1,40 @@
 import { useNavigate } from "react-router-dom";
-import type { Product } from "../../types/product.types";
+import type { TypeProduct } from "../../types/product.types";
 import { loadImage } from "../../utils/loadImage";
+import { formatPrice } from "../../utils/formatPrice";
 
 interface ProductCardProps {
-  product: Product;
+  product: TypeProduct;
+  isSeller?: boolean;
+  showModalEdit?: () => void;
 }
 
-export const ProductCard = ({ product }: ProductCardProps) => {
+export const ProductCard = ({ product, isSeller = false, showModalEdit }: ProductCardProps) => {
   const navigate = useNavigate();
-
-  // Función para formatear el precio (el precio viene como string desde el backend)
-  const formatPrice = (price: string | number) => {
-    const numPrice = typeof price === 'string' ? parseFloat(price) : price;
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    }).format(numPrice);
-  };
 
   return (
     <div
-      className="group cursor-pointer bg-white rounded-lg overflow-hidden transition-all duration-300 hover:shadow-lg"
-      onClick={() => navigate(`/store/product/${product.id}`)}
+      className="group cursor-pointer bg-white border border-neutral-200 rounded-lg overflow-hidden transition-all duration-300 hover:shadow-xl hover:border-neutral-300"
+      onClick={() => {
+        if (isSeller) {
+          showModalEdit?.();
+        } else {
+          navigate(`/store/product/${product.id}`);
+        }
+      }}
     >
       {/* Imagen del producto */}
-      <div className="w-full aspect-square bg-neutral-100 flex items-center justify-center overflow-hidden">
+      <div className="relative w-full aspect-square bg-neutral-50 flex items-center justify-center overflow-hidden">
         {product.image_path ? (
           <img
             src={loadImage(product.image_path)}
             alt={product.name}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-neutral-400">
+          <div className="w-full h-full flex items-center justify-center text-neutral-300">
             <svg
-              className="w-24 h-24"
+              className="w-20 h-20"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -44,33 +42,66 @@ export const ProductCard = ({ product }: ProductCardProps) => {
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                strokeWidth={2}
+                strokeWidth={1.5}
                 d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
               />
             </svg>
           </div>
         )}
+        
+        {/* Badge de stock bajo (opcional) */}
+        {product.stock > 0 && product.stock <= 10 && (
+          <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm px-2 py-1 rounded text-xs font-medium text-neutral-700">
+            Solo {product.stock} disponibles
+          </div>
+        )}
       </div>
 
       {/* Información del producto */}
-      <div className="p-4">
-        <h3 className="text-lg font-medium text-text mb-2 line-clamp-2 min-h-12">
+      <div className="p-5">
+        {/* Categorías */}
+        {product.categories && product.categories.length > 0 && (
+          <div className="flex flex-wrap gap-1.5 mb-3">
+            {product.categories.slice(0, 2).map((category, index) => (
+              <span
+                key={index}
+                className="inline-block px-2 py-0.5 text-xs font-medium bg-neutral-100 text-neutral-600 rounded"
+              >
+                {category}
+              </span>
+            ))}
+          </div>
+        )}
+
+        {/* Nombre del producto */}
+        <h3 className="text-base font-semibold text-text mb-2 line-clamp-2 min-h-12 leading-snug">
           {product.name}
         </h3>
         
-        {/* Precio */}
-        <div className="flex items-center gap-2 flex-wrap">
-          <span className="text-xl font-bold text-text">
+        {/* Vendedor */}
+        {!isSeller && (
+          <p className="text-sm text-muted mb-3">
+            {product.seller_name}
+          </p>
+        )}
+
+        {/* Precio y stock */}
+        <div className="flex items-center justify-between pt-3 border-t border-neutral-100">
+          <span className="text-2xl font-bold text-text">
             {formatPrice(product.price)}
           </span>
+          
+          {product.stock > 0 ? (
+            <span className="text-xs text-neutral-500 font-medium">
+              Stock: {product.stock}
+            </span>
+          ) : (
+            <span className="text-xs text-red-600 font-medium">
+              Agotado
+            </span>
+          )}
         </div>
-
-        {/* Stock disponible */}
-        <p className="text-sm text-muted mt-2">
-          {product.seller_name}
-        </p>
       </div>
     </div>
   );
 };
-

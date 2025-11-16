@@ -22,7 +22,7 @@ export const useUserStore = create<UserStore>()(
       logout: () => {
         set({ user: null, token: "" });
         localStorage.removeItem("user-storage");
-      },
+      }
     }),
     {
       name: "user-storage",

@@ -1,4 +1,5 @@
-export type GlobalStatus = 'ACTIVE' | 'INACTIVE' | 'DELETED' | 'active' | 'inactive' | 'deleted';
+import type { GlobalStatus } from "../lib/global-states";
+import type { TypeSeller } from "./user.types";
 
 export interface TypeCategory {
   id: string;
@@ -20,31 +21,27 @@ export interface ProductImage {
   created_at: Date;
 }
 
-export interface TypeSeller {
-  id: string;
-  user_id: string;
-  shop_name: string;
-  description?: string;
-  ruc: string;
-  business_address: string;
-  rating: string;
-  total_sales: number;
-  created_at: Date;
-  modified_at: Date;
-}
 
 export interface TypeProduct {
   id: string;
   seller_id: string;
-  seller?: TypeSeller;
-  seller_name?: string;
+  seller_name: string;
   name: string;
-  description?: string;
+  description: string;
   price: string;
   stock: number;
   status: GlobalStatus;
-  image_path?: string; 
-  categories?: string[]; 
+  image_path: string; 
+  categories: string[]; 
+}
+
+export interface TypeProductDetails 
+  extends Omit<TypeProduct, "categories"> {
+  seller: TypeSeller;
+  created_at: Date;
+  modified_at: Date;
+  images: ProductImage[];
+  categories: TypeCategory[];
 }
 
 export interface ProductsResponse {
@@ -67,4 +64,15 @@ export interface GetProductsParams {
   limit?: number;
   min_price?: number;
   max_price?: number;
+}
+
+
+export interface CreateProduct {
+  seller_id: string
+  categories: string[]
+  name: string;
+  description: string;
+  price: number;
+  stock: number;
+  images: {is_main: boolean, file: File}[]
 }

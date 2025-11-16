@@ -17,6 +17,13 @@ export interface TypeUser {
   modified_at:      Date;
 }
 
+export interface UpdateUserProfile {
+  name: string;
+  last_name_father: string;
+  last_name_mother: string;
+  phone: string;
+}
+
 export interface TypeRole {
   id:          string;
   name:        string;
@@ -42,4 +49,25 @@ export interface CreateSeller extends CreateUser {
   logo_image: File | null;
   ruc: string;
   business_address: string;
+}
+
+export interface TypeSeller {
+  id: string;
+  user_id: string;
+  shop_name: string;
+  description?: string;
+  ruc: string;
+  business_address: string;
+  rating: string;
+  total_sales: number;
+  created_at: Date;
+  modified_at: Date;
+  logo_image_path?: string;
+}
+
+export interface UpdateSellerProfile {
+  shop_name: string;
+  description?: string;
+  business_address: string;
+  logo_image?: File | null;
 }

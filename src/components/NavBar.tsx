@@ -6,6 +6,7 @@ import {
   ShoppingCart,
   User,
   Store,
+  Settings,
 } from "lucide-react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
@@ -75,7 +76,16 @@ export const NavBar = () => {
                   </div>
                   <div className="p-2">
                     <button
-                      onClick={logout}
+                      onClick={() => navigate('/user/config')}
+                      className="w-full text-left px-3 py-2 text-sm hover:bg-neutral-100 rounded-lg transition-colors flex items-center gap-2"
+                    >
+                      <Settings className="w-4 h-4" />
+                      Configuración
+                    </button>
+                    <button
+                      onClick={() => {
+                        logout();
+                      }}
                       className="w-full text-left px-3 py-2 text-sm hover:bg-neutral-100 rounded-lg transition-colors text-red-600"
                     >
                       Cerrar sesión
@@ -137,6 +147,16 @@ export const NavBar = () => {
                       Gestionar Tienda
                     </Link>
                   )}
+                  <button
+                    onClick={() => {
+                      navigate('/user/config');
+                      handleCloseMobileMenu();
+                    }}
+                    className="px-4 py-3 text-sm hover:bg-neutral-50 transition text-left flex items-center gap-2"
+                  >
+                    <Settings className="w-4 h-4" />
+                    Configuración
+                  </button>
                   <button
                     onClick={() => {
                       logout();

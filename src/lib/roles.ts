@@ -1,0 +1,1 @@
+export type RolesUser = 'admin' | 'seller' | 'buyer';

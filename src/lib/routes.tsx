@@ -9,11 +9,9 @@ import { useUserStore } from '../stores/user.store';
 import { ProductDetailsPage } from '../pages/ProductDetailsPage';
 import { SellerDashboardPage } from '../pages/SellerDashboardPage';
 import { CartPage } from '../pages/CartPage';
+import { UserConfigPage } from '../pages/UserConfigPage';
 
-/**
- * Componente para proteger rutas de invitados (login/signup)
- * Si el usuario está autenticado, redirige a /store
- */
+
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { user, token } = useUserStore();
 
@@ -25,21 +23,23 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 };
 
 
-const SellerProtectedRoute = ({ children }: { children: React.ReactNode }) => {
+const UserProtectedRoute = ({ children, typeUser, allUsers = false }: { children: React.ReactNode, typeUser?: "buyer" | "seller", allUsers?: boolean }) => {
   const { user, token } = useUserStore();
 
-  if (!user || !token) {
-    return <Navigate to="/login" replace />;
+  if(allUsers) {
+    if (!user || !token) return <Navigate to="/store" replace />;
   }
 
-  const isSeller = user?.role?.name?.toLowerCase() === "seller";
-  
-  if (!isSeller) {
-    return <Navigate to="/store" replace />;
+  if(typeUser === "buyer") {
+    if (!user || !token || user?.role?.name?.toLowerCase() !== "buyer") return <Navigate to="/store" replace />;
+  } else if(typeUser === "seller") {
+    if (!user || !token || user?.role?.name?.toLowerCase() !== "seller") return <Navigate to="/store" replace />;
   }
 
   return <>{children}</>;
 };
+
+
 
 /**
  * Configuración de rutas de la aplicación
@@ -77,24 +77,48 @@ export const routes: RouteObject[] = [
       {
         path: 'product/:id',
         element: <ProductDetailsPage />,
-      },
-      {
-        path: 'cart',
-        element: <CartPage />,
-      },
+      }
     ],
   },
   {
     path: '/seller/dashboard',
     element: (
-      <SellerProtectedRoute>
+      <UserProtectedRoute typeUser="seller">
         <MainPage />
-      </SellerProtectedRoute>
+      </UserProtectedRoute>
     ),
     children: [
       {
         index: true,
         element: <SellerDashboardPage />,
+      },
+    ],
+  },
+  {
+    path: '/store/cart',
+    element: (
+      <UserProtectedRoute typeUser="buyer">
+        <MainPage />
+      </UserProtectedRoute>
+    ),
+    children: [
+      {
+        index: true,
+        element: <CartPage />,
+      },
+    ],
+  },
+  {
+    path: '/user/config',
+    element: (
+      <UserProtectedRoute allUsers={true}>
+        <MainPage />
+      </UserProtectedRoute>
+    ),
+    children: [
+      {
+        index: true,
+        element: <UserConfigPage />,
       },
     ],
   }
