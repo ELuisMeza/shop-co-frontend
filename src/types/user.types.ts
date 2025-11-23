@@ -60,9 +60,11 @@ export interface TypeSeller {
   business_address: string;
   rating: string;
   total_sales: number;
+  money_raised: number;
   created_at: Date;
   modified_at: Date;
   logo_image_path?: string;
+  count_products: number;
 }
 
 export interface UpdateSellerProfile {

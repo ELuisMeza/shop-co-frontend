@@ -50,6 +50,7 @@ export const CartPage = () => {
       setCartItems([]);
     } else {
       toast.error(message);
+      setIsRedirecting(false)
     }
   };
 

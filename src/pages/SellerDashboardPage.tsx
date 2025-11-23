@@ -61,10 +61,17 @@ export const SellerDashboardPage = () => {
               <h2 className="text-xl font-semibold text-text">Información de la Tienda</h2>
               <button
                 onClick={() => setShowModalSellerInfo(true)}
-                className="flex items-center gap-2 px-4 py-2 border border-neutral-300 rounded-lg hover:bg-neutral-50 transition-colors text-text"
+                className="items-center gap-2 px-4 py-2 border border-neutral-300 rounded-lg hover:bg-neutral-50 transition-colors text-text hidden md:flex"
               >
                 <Edit className="w-4 h-4" />
                 Editar Información
+              </button>
+              <button
+                onClick={() => setShowModalSellerInfo(true)}
+                className="items-center gap-2 px-4 py-2 border border-neutral-300 rounded-lg hover:bg-neutral-50 transition-colors text-text flex md:hidden"
+              >
+                <Edit className="w-4 h-4" />
+                Editar 
               </button>
             </div>
             
