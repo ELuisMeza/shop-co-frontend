@@ -10,6 +10,7 @@ import { ProductDetailsPage } from '../pages/ProductDetailsPage';
 import { SellerDashboardPage } from '../pages/SellerDashboardPage';
 import { CartPage } from '../pages/CartPage';
 import { UserConfigPage } from '../pages/UserConfigPage';
+import { ConfirmPaymentPage } from '../pages/ConfirmPaymentPage';
 
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -105,6 +106,10 @@ export const routes: RouteObject[] = [
       {
         index: true,
         element: <CartPage />,
+      },
+      {
+        path: 'order',
+        element: <ConfirmPaymentPage />,
       },
     ],
   },

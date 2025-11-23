@@ -1,4 +1,5 @@
 export interface TypeCartItem {
+    seller_id: string;
     product_name: string;
     product_price: string;
     product_stock: number;
