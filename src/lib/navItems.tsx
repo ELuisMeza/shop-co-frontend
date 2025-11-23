@@ -1,4 +1,4 @@
-import { ArrowRight, ShoppingCart, Store, User, Settings } from "lucide-react";
+import { ArrowRight, ShoppingCart, Store, User, Settings, BaggageClaimIcon } from "lucide-react";
 import type { NavItem } from "../types/navbar.types";
 
 interface NavItemsConfig {
@@ -33,6 +33,15 @@ export const getNavItems = ({ navigate, logout }: NavItemsConfig): NavItem[] => 
   },
   // Elementos para vendedores
   {
+    id: "seller-my-orders",
+    label: "Mis pedidos",
+    icon: BaggageClaimIcon,
+    type: "button",
+    onClick: () => navigate("/seller/my-orders"),
+    visibleFor: ["seller"],
+    variant: "icon",
+  },
+  {
     id: "manage-store",
     label: "Gestionar Tienda",
     icon: Store,
@@ -47,7 +56,16 @@ export const getNavItems = ({ navigate, logout }: NavItemsConfig): NavItem[] => 
     label: "Carrito de compras",
     icon: ShoppingCart,
     type: "button",
-    onClick: () => navigate("/store/cart"),
+    onClick: () => navigate("/buyer/cart"),
+    visibleFor: ["buyer"],
+    variant: "icon",
+  },
+  {
+    id: "my-orders",
+    label: "Mis pedidos",
+    icon: BaggageClaimIcon,
+    type: "button",
+    onClick: () => navigate("/buyer/my-orders"),
     visibleFor: ["buyer"],
     variant: "icon",
   },

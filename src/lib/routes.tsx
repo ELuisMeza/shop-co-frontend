@@ -11,6 +11,7 @@ import { SellerDashboardPage } from '../pages/SellerDashboardPage';
 import { CartPage } from '../pages/CartPage';
 import { UserConfigPage } from '../pages/UserConfigPage';
 import { ConfirmPaymentPage } from '../pages/ConfirmPaymentPage';
+import { MyOrdersPage } from '../pages/MyOrdersPage';
 
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -82,7 +83,7 @@ export const routes: RouteObject[] = [
     ],
   },
   {
-    path: '/seller/dashboard',
+    path: '/seller',
     element: (
       <UserProtectedRoute typeUser="seller">
         <MainPage />
@@ -90,13 +91,19 @@ export const routes: RouteObject[] = [
     ),
     children: [
       {
+        path: 'dashboard',
         index: true,
         element: <SellerDashboardPage />,
+      },
+      {
+        path: 'my-orders',
+        index: true,
+        element: <MyOrdersPage />,
       },
     ],
   },
   {
-    path: '/store/cart',
+    path: '/buyer',
     element: (
       <UserProtectedRoute typeUser="buyer">
         <MainPage />
@@ -104,12 +111,19 @@ export const routes: RouteObject[] = [
     ),
     children: [
       {
+        path: 'cart',
         index: true,
         element: <CartPage />,
       },
       {
-        path: 'order',
+        path: 'confirm-order',
+        index: true,
         element: <ConfirmPaymentPage />,
+      },
+      {
+        path: 'my-orders',
+        index: true,
+        element: <MyOrdersPage />,
       },
     ],
   },

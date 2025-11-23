@@ -1,4 +1,4 @@
-import type { TypeCreateOrder, TypeCreateOrderResponse } from "../types/orders.types";
+import type { TypeCreateOrder, TypeCreateOrderResponse, TypeMyOrdersBuyer, TypeMyOrdersSeller } from "../types/orders.types";
 import { AxiosError } from "axios";
 import apiService from "./api.service";
 
@@ -24,6 +24,24 @@ export const OrdersService = {
       }
       const errorMessage = error instanceof Error ? error.message : 'Error desconocido';
       return { success: false, message: 'Error al confirmar pago: ' + errorMessage, data: null };
+    }
+  },
+
+  getMyOrders: async (): Promise<{ success: boolean; message: string; data: TypeMyOrdersBuyer[] | null }> => {
+    try {
+      const response = await apiService.get<TypeMyOrdersBuyer[]>(`${BASE_URL}/buyer/my-orders`);
+      return { success: true, message: 'Pedidos cargados correctamente', data: response.data };
+    } catch (error) {
+      return { success: false, message: 'Error al cargar pedidos', data: [] };
+    }
+  },
+
+  getMyOrdersSeller: async (): Promise<{ success: boolean; message: string; data: TypeMyOrdersSeller[] | null }> => {
+    try {
+      const response = await apiService.get<TypeMyOrdersSeller[]>(`${BASE_URL}/seller/my-orders`);
+      return { success: true, message: 'Pedidos cargados correctamente', data: response.data };
+    } catch (error) {
+      return { success: false, message: 'Error al cargar pedidos', data: [] };
     }
   }
 }
