@@ -1,0 +1,19 @@
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        # Variables de entorno necesarias en tiempo de build
+        VITE_API_URL_BACK: ${VITE_API_URL_BACK:-http://localhost:3000}
+        VITE_CLIENT_PAYPAL: ${VITE_CLIENT_PAYPAL:-}
+    ports:
+      - "8080:80"
+    restart: unless-stopped
+    networks:
+      - shop-co-network
+
+networks:
+  shop-co-network:
+    driver: bridge
+

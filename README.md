@@ -238,3 +238,178 @@ npm run lint
 - `@vitejs/plugin-react-swc` - Plugin React con SWC
 - `eslint` - Linter
 - `typescript-eslint` - Reglas ESLint para TypeScript
+
+---
+
+## 🐳 Despliegue con Docker
+
+El proyecto incluye configuración completa para desplegar con Docker.
+
+### Requisitos
+
+- **Docker** >= 20.x
+- **Docker Compose** >= 2.x
+
+### Archivos de Docker
+
+| Archivo | Descripción |
+|---------|-------------|
+| `Dockerfile` | Build multi-stage (Node.js + Nginx) |
+| `docker-compose.yml` | Orquestación de servicios |
+| `.dockerignore` | Archivos excluidos del contexto |
+| `nginx.conf` | Configuración del servidor web |
+
+### Despliegue Rápido
+
+1. **Configura las variables de entorno** creando un archivo `.env`:
+
+```env
+VITE_API_URL_BACK=http://tu-backend-api.com
+VITE_CLIENT_PAYPAL=tu_codigo_de_cliente_paypal
+```
+
+2. **Construye y ejecuta el contenedor**:
+
+```bash
+docker-compose up --build
+```
+
+3. **Accede a la aplicación**: http://localhost:8080
+
+### Comandos Docker Útiles
+
+```bash
+# Construir y ejecutar
+docker-compose up --build
+
+# Ejecutar en segundo plano (detached)
+docker-compose up -d
+
+# Ver logs en tiempo real
+docker-compose logs -f
+
+# Detener contenedores
+docker-compose down
+
+# Reconstruir sin cache
+docker-compose build --no-cache
+
+# Ver contenedores en ejecución
+docker-compose ps
+
+# Reiniciar el servicio
+docker-compose restart
+```
+
+### Build Manual con Docker
+
+Si prefieres usar Docker directamente sin Docker Compose:
+
+```bash
+# Construir la imagen
+docker build \
+  --build-arg VITE_API_URL_BACK=http://tu-backend-api.com \
+  --build-arg VITE_CLIENT_PAYPAL=tu_codigo_paypal \
+  -t shop-co-frontend .
+
+# Ejecutar el contenedor
+docker run -d -p 8080:80 --name shop-co-frontend shop-co-frontend
+
+# Detener el contenedor
+docker stop shop-co-frontend
+
+# Eliminar el contenedor
+docker rm shop-co-frontend
+```
+
+### Cambiar el Puerto
+
+Para usar un puerto diferente, modifica `docker-compose.yml`:
+
+```yaml
+ports:
+  - "3000:80"   # Cambia 3000 por el puerto deseado
+```
+
+O con Docker directamente:
+
+```bash
+docker run -d -p 3000:80 shop-co-frontend
+```
+
+### Configuración de Nginx
+
+El archivo `nginx.conf` incluye:
+
+- ✅ Soporte para SPA (Single Page Application) con `try_files`
+- ✅ Compresión gzip para mejor rendimiento
+- ✅ Cache de assets estáticos (1 año)
+- ✅ Headers de seguridad (X-Frame-Options, X-Content-Type-Options, X-XSS-Protection)
+
+### Variables de Entorno en Docker
+
+> ⚠️ **Importante**: Las variables de Vite (`VITE_*`) se incrustan en el código durante el **build**, no en tiempo de ejecución. Por eso se pasan como `build args` en el Dockerfile.
+
+| Variable | Descripción | Obligatoria |
+|----------|-------------|-------------|
+| `VITE_API_URL_BACK` | URL del backend API | ✅ Sí |
+| `VITE_CLIENT_PAYPAL` | Client ID de PayPal | ✅ Sí |
+
+### Despliegue en Producción
+
+Para desplegar en un servidor de producción:
+
+1. **Sube los archivos** al servidor:
+   - `Dockerfile`
+   - `docker-compose.yml`
+   - `nginx.conf`
+   - `.dockerignore`
+   - Todo el código fuente
+
+2. **Configura las variables de entorno** en el archivo `.env`
+
+3. **Ejecuta**:
+```bash
+docker-compose up -d --build
+```
+
+4. **Configura un reverse proxy** (opcional) como Traefik o Nginx para SSL/TLS
+
+### Estructura Docker
+
+```
+front/
+├── Dockerfile           # Build multi-stage
+├── docker-compose.yml   # Orquestación
+├── .dockerignore        # Exclusiones
+├── nginx.conf           # Config del servidor
+├── .env                 # Variables de entorno (crear manualmente)
+└── src/                 # Código fuente
+```
+
+### Solución de Problemas
+
+**Error: Puerto en uso**
+```bash
+# Detén el contenedor anterior
+docker-compose down
+# O cambia el puerto en docker-compose.yml
+```
+
+**Error: Docker daemon no está corriendo**
+```bash
+# Windows: Abre Docker Desktop
+# Linux: sudo systemctl start docker
+```
+
+**Error: Permisos denegados**
+```bash
+# Linux: Agrega tu usuario al grupo docker
+sudo usermod -aG docker $USER
+# Cierra sesión y vuelve a iniciar
+```
+
+**Ver logs de errores**
+```bash
+docker-compose logs frontend
+```
