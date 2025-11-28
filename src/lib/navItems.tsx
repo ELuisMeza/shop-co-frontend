@@ -1,4 +1,4 @@
-import { ArrowRight, ShoppingCart, Store, User, Settings, BaggageClaimIcon } from "lucide-react";
+import { ShoppingCart, Store, User, Settings, BaggageClaimIcon, LogIn } from "lucide-react";
 import type { NavItem } from "../types/navbar.types";
 
 interface NavItemsConfig {
@@ -26,7 +26,7 @@ export const getNavItems = ({ navigate, logout }: NavItemsConfig): NavItem[] => 
   {
     id: "login",
     label: "Iniciar Sesión",
-    icon: ArrowRight,
+    icon: LogIn,
     type: "link",
     to: "/login",
     variant: "primary",

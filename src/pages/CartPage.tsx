@@ -17,12 +17,15 @@ import { useEffect, useState } from "react";
 import { formatPrice } from "../utils/formatPrice";
 import { OrdersService } from "../services/orders.service";
 import { transformOrderToCreate } from "../utils/transforms/transformOrderToCreate";
+import yapeQr from "../assets/qr.jpg";
 
 export const CartPage = () => {
   const { cartItems, loading, error, setCartItems } = useGetCartItems();
   const [showClearModal, setShowClearModal] = useState(false);
   const [totalAmount, setTotalAmount] = useState(0);
   const [isRedirecting, setIsRedirecting] = useState(false);
+  const [showPaymentOptions, setShowPaymentOptions] = useState(false);
+  const [showYapeModal, setShowYapeModal] = useState(false);
 
   // Calcular el total del carrito
   useEffect(() => {
@@ -52,6 +55,17 @@ export const CartPage = () => {
       toast.error(message);
       setIsRedirecting(false)
     }
+  };
+
+  const handleSelectPayment = (method: "paypal" | "yape") => {
+    if (method === "paypal") {
+      setShowPaymentOptions(false);
+      handleCreateOrder();
+      return;
+    }
+
+    setShowPaymentOptions(false);
+    setShowYapeModal(true);
   };
 
   // Eliminar un item del carrito
@@ -330,7 +344,7 @@ export const CartPage = () => {
                     </div>
 
                     <button
-                      onClick={handleCreateOrder}
+                      onClick={() => setShowPaymentOptions(true)}
                       className="w-full px-6 py-3.5 bg-foreground text-background rounded-lg hover:bg-foreground/90 active:scale-[0.98] transition-all font-semibold text-base shadow-sm"
                     >
                       Proceder al pago
@@ -364,6 +378,100 @@ export const CartPage = () => {
               </div>
             )}
           </div>
+
+          {/* Modal opciones de pago */}
+          {showPaymentOptions && (
+            <>
+              <div
+                className="fixed inset-0 bg-black/50 z-40 backdrop-blur-sm animate-in fade-in duration-200"
+                onClick={() => setShowPaymentOptions(false)}
+              />
+              <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+                <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6 sm:p-8 space-y-6 animate-in zoom-in-95 duration-200">
+                  <div className="space-y-2 text-center">
+                    <h3 className="text-2xl font-bold text-text">
+                      ¿Cómo deseas pagar?
+                    </h3>
+                    <p className="text-sm text-muted">
+                      Selecciona un método para completar tu compra por {formatPrice(totalAmount)}.
+                    </p>
+                  </div>
+
+                  <div className="grid sm:grid-cols-2 gap-4">
+                    <button
+                      onClick={() => handleSelectPayment("paypal")}
+                      className="flex flex-col items-center gap-3 border border-neutral-200 rounded-xl p-4 hover:border-blue-500 hover:shadow-lg transition-all"
+                    >
+                      <div className="w-12 h-12 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-xl">
+                        P
+                      </div>
+                      <div className="text-center">
+                        <p className="font-semibold text-text">PayPal</p>
+                        <p className="text-xs text-muted">
+                          Pago seguro con tu cuenta PayPal
+                        </p>
+                      </div>
+                    </button>
+
+                    <button
+                      onClick={() => handleSelectPayment("yape")}
+                      className="flex flex-col items-center gap-3 border border-neutral-200 rounded-xl p-4 hover:border-purple-500 hover:shadow-lg transition-all"
+                    >
+                      <div className="w-12 h-12 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center font-bold text-xl">
+                        Y
+                      </div>
+                      <div className="text-center">
+                        <p className="font-semibold text-text">Yape</p>
+                        <p className="text-xs text-muted">
+                          Escanea el QR y completa el pago
+                        </p>
+                      </div>
+                    </button>
+                  </div>
+
+                  <button
+                    onClick={() => setShowPaymentOptions(false)}
+                    className="w-full px-4 py-2.5 border border-neutral-300 rounded-lg hover:bg-neutral-50 transition-colors font-semibold text-sm"
+                  >
+                    Cancelar
+                  </button>
+                </div>
+              </div>
+            </>
+          )}
+
+          {/* Modal Yape */}
+          {showYapeModal && (
+            <>
+              <div
+                className="fixed inset-0 bg-black/50 z-40 backdrop-blur-sm animate-in fade-in duration-200"
+                onClick={() => setShowYapeModal(false)}
+              />
+              <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+                <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 sm:p-8 space-y-6 animate-in zoom-in-95 duration-200">
+                  <div className="text-center space-y-2">
+                    <h3 className="text-2xl font-bold text-text">Paga con Yape</h3>
+                    <p className="text-sm text-muted">
+                      Escanea el código QR con tu aplicación Yape y completa el pago por {formatPrice(totalAmount)}.
+                    </p>
+                  </div>
+                  <div className="border-4 border-purple-200 rounded-2xl p-3 bg-purple-50">
+                    <img
+                      src={yapeQr}
+                      alt="Código QR de Yape"
+                      className="w-full h-full object-contain rounded-xl"
+                    />
+                  </div>
+                  <button
+                    onClick={() => setShowYapeModal(false)}
+                    className="w-full px-4 py-2.5 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-semibold text-sm"
+                  >
+                    Entendido
+                  </button>
+                </div>
+              </div>
+            </>
+          )}
 
           {/* Modal de confirmación para limpiar carrito */}
           {showClearModal && (
